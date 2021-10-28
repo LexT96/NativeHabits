@@ -8,7 +8,7 @@ import React from "react"
 import { useColorScheme } from "react-native"
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { WelcomeScreen, DemoScreen, DemoListScreen } from "../screens"
+import { WelcomeScreen, DemoScreen, DemoListScreen, HomeScreen, NewHabitScreen } from "../screens"
 import { navigationRef } from "./navigation-utilities"
 
 /**
@@ -26,7 +26,9 @@ import { navigationRef } from "./navigation-utilities"
 export type NavigatorParamList = {
   welcome: undefined
   demo: undefined
+  newHabit: undefined
   demoList: undefined
+  home: undefined
 }
 
 // Documentation: https://reactnavigation.org/docs/stack-navigator/
@@ -38,8 +40,10 @@ const AppStack = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="welcome"
+      initialRouteName="home"
     >
+      <Stack.Screen name="home" component={HomeScreen} />
+      <Stack.Screen name="newHabit" component={NewHabitScreen} />
       <Stack.Screen name="welcome" component={WelcomeScreen} />
       <Stack.Screen name="demo" component={DemoScreen} />
       <Stack.Screen name="demoList" component={DemoListScreen} />
@@ -73,5 +77,5 @@ AppNavigator.displayName = "AppNavigator"
  *
  * `canExit` is used in ./app/app.tsx in the `useBackButtonHandler` hook.
  */
-const exitRoutes = ["welcome"]
+const exitRoutes = ["home"]
 export const canExit = (routeName: string) => exitRoutes.includes(routeName)

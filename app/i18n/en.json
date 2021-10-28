@@ -12,6 +12,13 @@
     "readyForLaunch": "Ready for launch.",
     "continue": "CONTINUE"
   },
+  "newHabitScreen": {
+    "title": "Create a new habit",
+    "create": "CREATE",
+    "placeholders" : {
+      "name": "Name"
+    }
+  },
   "demoScreen": {
     "howTo": "HOW TO",
     "title": "What’s In This Stack?",

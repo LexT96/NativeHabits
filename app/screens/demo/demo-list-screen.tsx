@@ -6,6 +6,7 @@ import { Header, Screen, Text, AutoImage as Image, GradientBackground } from "..
 import { color, spacing } from "../../theme"
 import { useStores } from "../../models"
 import { NavigatorParamList } from "../../navigators"
+import { useNavigation } from "@react-navigation/native"
 
 const FULL: ViewStyle = {
   flex: 1,
@@ -42,8 +43,8 @@ const FLAT_LIST: ViewStyle = {
   paddingHorizontal: spacing[4],
 }
 
-export const DemoListScreen: FC<StackScreenProps<NavigatorParamList, "demoList">> = observer(
-  ({ navigation }) => {
+export const DemoListScreen: FC<StackScreenProps<NavigatorParamList, "demoList">> = observer(() => {
+    const navigation = useNavigation();
     const goBack = () => navigation.goBack()
 
     const { characterStore } = useStores()

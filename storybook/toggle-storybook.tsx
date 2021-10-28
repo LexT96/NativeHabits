@@ -30,7 +30,7 @@ export function ToggleStorybook(props) {
             show = !show
 
             // Write it back to storage
-            saveString("devStorybook", show ? "on" : "off")
+            saveString("devStorybook", show ? "on" : "on")
 
             // Return it to change the local state
             return show
