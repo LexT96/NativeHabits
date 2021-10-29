@@ -10,6 +10,8 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { WelcomeScreen, DemoScreen, DemoListScreen, HomeScreen, NewHabitScreen } from "../screens"
 import { navigationRef } from "./navigation-utilities"
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { translate } from "../i18n"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -40,10 +42,8 @@ const AppStack = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="home"
+      initialRouteName="welcome"
     >
-      <Stack.Screen name="home" component={HomeScreen} />
-      <Stack.Screen name="newHabit" component={NewHabitScreen} />
       <Stack.Screen name="welcome" component={WelcomeScreen} />
       <Stack.Screen name="demo" component={DemoScreen} />
       <Stack.Screen name="demoList" component={DemoListScreen} />
@@ -51,7 +51,23 @@ const AppStack = () => {
   )
 }
 
+const HomeStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName="home"
+    >
+      <Stack.Screen name="home" component={HomeScreen} />
+      <Stack.Screen name="newHabit" component={NewHabitScreen} />
+    </Stack.Navigator>
+  )
+}
+
 interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
+
+const Tab = createBottomTabNavigator();
 
 export const AppNavigator = (props: NavigationProps) => {
   const colorScheme = useColorScheme()
@@ -61,7 +77,14 @@ export const AppNavigator = (props: NavigationProps) => {
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       {...props}
     >
-      <AppStack />
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Tab.Screen name={translate("route.home")} component={HomeStack} />
+        <Tab.Screen name={translate("route.calendar")} component={AppStack} />
+      </Tab.Navigator>
     </NavigationContainer>
   )
 }
