@@ -7,7 +7,8 @@ import { HabitModel } from "../habit/habit"
 export const HabitEntryModel = types
   .model("HabitEntry")
   .props({
-    date: types.Date,
+    id: types.identifierNumber,
+    date: types.string,
     habit: types.reference(HabitModel),
   })
   .views((self) => ({})) // eslint-disable-line @typescript-eslint/no-unused-vars

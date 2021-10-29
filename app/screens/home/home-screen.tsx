@@ -1,7 +1,7 @@
 import React, { FC } from "react"
-import { View, ViewStyle, TextStyle, ImageStyle, SafeAreaView } from "react-native"
+import { View, ViewStyle, TextStyle, ImageStyle, SafeAreaView, TouchableOpacity } from "react-native"
 import { StackScreenProps } from "@react-navigation/stack"
-import { observer } from "mobx-react-lite"
+import { Observer, observer } from "mobx-react-lite"
 import {
   Button,
   Header,
@@ -9,14 +9,18 @@ import {
   Text,
   GradientBackground,
   AutoImage as Image,
+  HabitIcon,
 } from "../../components"
 import { color, spacing, typography } from "../../theme"
 import { NavigatorParamList } from "../../navigators"
-import { AddIcon, Box, Fab, Icon } from "native-base"
+import { AddIcon, Box, Center, Column, Fab, FlatList, Icon, Row } from "native-base"
 import { AntDesign, MaterialIcons } from "@expo/vector-icons"
 import { useIsFocused } from "@react-navigation/native"
-
-const bowserLogo = require("../welcome/bowser.png")
+import { Habit, HabitEntryModel, HabitSnapshot, useStores } from "../../models"
+import { HabitIconType, icons } from "../../components/habit-icon/icons"
+import moment, { Moment } from "moment";
+import { useState } from "react"
+import { getSnapshot } from "mobx-state-tree"
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -40,64 +44,47 @@ const HEADER_TITLE: TextStyle = {
   textAlign: "center",
   letterSpacing: 1.5,
 }
-const TITLE_WRAPPER: TextStyle = {
-  ...TEXT,
-  textAlign: "center",
+const HABIT_ENTRY_CIRCLE: ViewStyle = {
+  height: 50,
+  width: 50,
+  borderRadius: 30,
+  borderWidth: 2,
+  borderColor: color.palette.angry,
 }
-const TITLE: TextStyle = {
-  ...TEXT,
-  ...BOLD,
-  fontSize: 28,
-  lineHeight: 38,
-  textAlign: "center",
+
+const generateDates = () => {
+  const dates = [moment()];
+  for (let i = 1; i < 5; i++) {
+    dates.push(moment().subtract(i, 'days'));
+  }
+  return dates;
 }
-const ALMOST: TextStyle = {
-  ...TEXT,
-  ...BOLD,
-  fontSize: 26,
-  fontStyle: "italic",
-}
-const BOWSER: ImageStyle = {
-  alignSelf: "center",
-  marginVertical: spacing[5],
-  maxWidth: "100%",
-  width: 343,
-  height: 230,
-}
-const CONTENT: TextStyle = {
-  ...TEXT,
-  color: "#BAB6C8",
-  fontSize: 15,
-  lineHeight: 22,
-  marginBottom: spacing[5],
-}
-const CONTINUE: ViewStyle = {
-  paddingVertical: spacing[4],
-  paddingHorizontal: spacing[4],
-  backgroundColor: color.palette.deepPurple,
-}
-const CONTINUE_TEXT: TextStyle = {
-  ...TEXT,
-  ...BOLD,
-  fontSize: 13,
-  letterSpacing: 2,
-}
-const FOOTER: ViewStyle = { backgroundColor: "#20162D" }
-const FOOTER_CONTENT: ViewStyle = {
-  paddingVertical: spacing[4],
-  paddingHorizontal: spacing[4],
-}
+
+
 
 export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = observer(
   ({ navigation }) => {
+    const {habitStore, habitEntryStore} = useStores();
+    const {habits} = habitStore;
+    const {habitEntries} = habitEntryStore;
     const navigateToNewHabitScreen = () => navigation.navigate("newHabit")
     const isFocused = useIsFocused()
+    const findIcon = (iconName: string) => {
+      const icon = icons.find((icon: HabitIconType) => icon.name === iconName);
+      return icon.img;
+    }
+
+    const handleHabitEntryCirclePress =  (habit: Habit, date: Moment) => {
+      const entry = HabitEntryModel.create({ id: Date.now(), habit: habit.id, date: date.format("YYYY-MM-DD") })
+      habitEntryStore.addHabitEntry(entry);
+    }
 
     return (
       <View testID="WelcomeScreen" style={FULL}>
         <GradientBackground colors={["#422443", "#281b34"]} />
         <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
           <Header headerTx="welcomeScreen.poweredBy" style={HEADER} titleStyle={HEADER_TITLE} />
+
           {isFocused && (
             <Fab
               position="absolute"
@@ -106,6 +93,69 @@ export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = obse
               icon={<AddIcon size="md" />}
             />
           )}
+
+          <FlatList
+            data={habits}
+            extraData={habitEntries.slice()}
+            renderItem={({ item: habit }) => (
+              <Box style={{ marginBottom: spacing[2] }}>
+                <Text>{habit.name}</Text>
+                <Row>
+                  <HabitIcon source={findIcon(habit.icon)} />
+                  <FlatList
+                    horizontal
+                    data={generateDates()}
+                    renderItem={({ item: date }) => (
+                      <Column style={{ justifyContent: "flex-end" }}>
+                        <Center>
+                          <TouchableOpacity
+                            style={HABIT_ENTRY_CIRCLE}
+                            onPress={() => handleHabitEntryCirclePress(habit, date)}
+                          >
+                            <Text>
+                              {habitEntryStore
+                                .getForHabit(habit.id)
+                                .find((entry) => entry.date === date.format("YYYY-MM-DD")) ? "Da" : "No"}
+                            </Text>
+                          </TouchableOpacity>
+                          <Text style={{ marginHorizontal: spacing[3], paddingTop: spacing[2] }}>
+                            {date.format("DD-MM")}
+                          </Text>
+                        </Center>
+                      </Column>
+                    )}
+                  />
+                  {/* <FlatList
+                    horizontal
+                    data={habitEntryStore.getForHabit(habit.id)}
+                    keyExtractor={(entry) => entry.id}
+                    renderItem={({ item: entry }) => (
+                      <Column style={{ marginTop: spacing[4] }}>
+                        <TouchableOpacity style={{paddingBottom: spacing[1]}}>
+                          <Center>
+                            <Box
+                              style={{
+                                width: 45,
+                                height: 45,
+                                borderRadius: 30,
+                                borderWidth: 3,
+                                borderColor: color.palette.angry,
+                                backgroundColor: color.transparent,
+                              }}
+                            />
+                          </Center>
+                        </TouchableOpacity>
+                        <Text style={{ marginHorizontal: spacing[3] }}>
+                          {moment(entry.date, "YYYY-MM-DD").format("DD-MM")}
+                        </Text>
+                      </Column>
+                    )}
+                  /> */}
+                </Row>
+                {/* <Text>{JSON.stringify(habit)}</Text>   */}
+              </Box>
+            )}
+          />
           {/* <Text style={TITLE_WRAPPER}>
             <Text style={TITLE} text="Your new app, " />
             <Text style={ALMOST} text="almost" />

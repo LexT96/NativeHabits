@@ -60,11 +60,10 @@ export const NewHabitScreen = observer(function NewHabitScreen() {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const handleNameChange = (text: string) => setName(text);
-  console.log(icon)
   const createHabit = async () => {
     const habit = HabitModel.create({ id: Date.now(), name, icon })
-    console.log(habit);
     habitStore.addHabit(habit);
+    navigation.goBack();
   }
 
   const validateForm = () => {
@@ -88,8 +87,8 @@ export const NewHabitScreen = observer(function NewHabitScreen() {
                 <HabitIcon
                   isActive={icon === habitIcon.name}
                   onPress={() => setIcon(habitIcon.name)}
+                  source={icons[index].img}
                   key={index}
-                  iconNumber={index}
                 />
                 {/* <HabitIcon onPress={() => setIcon(icon.img)} key={index} iconNumber={index} /> */}
               </Column>
