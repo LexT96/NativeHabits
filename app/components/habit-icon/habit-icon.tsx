@@ -16,7 +16,7 @@ const CONTAINER: ViewStyle = {
   width: 70,
   height: 70,
   margin: spacing[2],
-  backgroundColor: color.palette.orange,
+  backgroundColor: color.primary,
 }
 
 export interface HabitIconProps {
@@ -27,6 +27,7 @@ export interface HabitIconProps {
   source: ImageSourcePropType;
   isActive?: boolean;
   onPress?: () => void;
+  onLongPress?: () => void;
 }
 
 const ACTIVE_OPACITY = 0.6;
@@ -35,12 +36,13 @@ const ACTIVE_OPACITY = 0.6;
  * A small image with a round border.
  */
 export const HabitIcon = observer(function HabitIcon(props: HabitIconProps) {
-  const { style, source, onPress, isActive } = props;
+  const { style, source, onPress, isActive, onLongPress } = props;
   const styles = flatten([CONTAINER, style, { opacity: isActive ? ACTIVE_OPACITY : 1 }])
   return (
     <TouchableWithoutFeedback
       style={styles}
       onPress={onPress}
+      onLongPress={onLongPress}
     >
       <Image size="xs" alt={"HabitIcon"} source={source} />
     </TouchableWithoutFeedback>

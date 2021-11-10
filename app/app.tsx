@@ -45,6 +45,7 @@ function App() {
     ;(async () => {
       await initFonts() // expo
       setupRootStore().then(setRootStore)
+      
     })()
   }, [])
 
@@ -61,14 +62,14 @@ function App() {
     <ToggleStorybook>
       <RootStoreProvider value={rootStore}>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <ErrorBoundary catchErrors={"always"}>
-            <NativeBaseProvider>
+          <NativeBaseProvider>
+            <ErrorBoundary catchErrors={"always"}>
               <AppNavigator
                 initialState={initialNavigationState}
                 onStateChange={onNavigationStateChange}
               />
-            </NativeBaseProvider>
-          </ErrorBoundary>
+            </ErrorBoundary>
+          </NativeBaseProvider>
         </SafeAreaProvider>
       </RootStoreProvider>
     </ToggleStorybook>

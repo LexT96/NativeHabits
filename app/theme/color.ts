@@ -14,6 +14,9 @@ export const color = {
    * The palette is available to use, but prefer using the name.
    */
   palette,
+
+  gradientStart: "#422443",
+  gradientEnd: "#281b34",
   /**
    * A helper for making something see-thru. Use sparingly as many layers of transparency
    * can cause older Android devices to slow down due to the excessive compositing required

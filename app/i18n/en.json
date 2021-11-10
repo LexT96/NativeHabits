@@ -6,13 +6,14 @@
   },
   "route": {
     "home": "Home",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "today": "Today"
   },
   "errors": {
     "invalidEmail": "Invalid email address."
   },
   "welcomeScreen": {
-    "poweredBy": "POWERED BY IGNITE",
+    "poweredBy": "HabitTracker",
     "readyForLaunch": "Ready for launch.",
     "continue": "CONTINUE"
   },
@@ -21,7 +22,22 @@
     "create": "CREATE",
     "placeholders" : {
       "name": "Name"
+    },
+    "error": {
+      "icon": "Please select a valid icon",
+      "name": "Please enter a name for your habit"
     }
+  },
+  "calendarScreen": {
+    "header"  : "Calendar",
+    "select": {
+      "placeholder": "Select a habit"
+    }
+  },
+  "todayScreen": {
+    "todoTitle": "Outstanding habits",
+    "doneTitle": "Accomplished habits",
+    "header": "Today"
   },
   "demoScreen": {
     "howTo": "HOW TO",

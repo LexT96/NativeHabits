@@ -1,11 +1,10 @@
 import React from "react"
 import { View, ViewStyle, TextStyle } from "react-native"
 import { HeaderProps } from "./header.props"
-import { Button } from "../button/button"
-import { Text } from "../text/text"
 import { Icon } from "../icon/icon"
 import { spacing } from "../../theme"
 import { translate } from "../../i18n/"
+import { Button, Text } from "native-base";
 
 // static styles
 const ROOT: ViewStyle = {
@@ -40,17 +39,17 @@ export function Header(props: HeaderProps) {
   return (
     <View style={[ROOT, style]}>
       {leftIcon ? (
-        <Button preset="link" onPress={onLeftPress}>
+        <Button variant="link"  onPress={onLeftPress}>
           <Icon icon={leftIcon} />
         </Button>
       ) : (
         <View style={LEFT} />
       )}
       <View style={TITLE_MIDDLE}>
-        <Text style={[TITLE, titleStyle]} text={header} />
+        <Text style={[TITLE, titleStyle]}>{header}</Text>
       </View>
       {rightIcon ? (
-        <Button preset="link" onPress={onRightPress}>
+        <Button variant="link" onPress={onRightPress}>
           <Icon icon={rightIcon} />
         </Button>
       ) : (

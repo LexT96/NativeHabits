@@ -1,17 +1,22 @@
+/* eslint-disable react/display-name */
 /**
  * The app navigator (formerly "AppNavigator" and "MainNavigator") is used for the primary
  * navigation flows of your app.
  * Generally speaking, it will contain an auth flow (registration, login, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
-import React from "react"
+import React, { useEffect } from "react"
 import { useColorScheme } from "react-native"
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { WelcomeScreen, DemoScreen, DemoListScreen, HomeScreen, NewHabitScreen } from "../screens"
+import { CalendarScreen, HomeScreen, NewHabitScreen, ShowHabitScreen, TodayScreen } from "../screens"
 import { navigationRef } from "./navigation-utilities"
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { translate } from "../i18n"
+import { Feather } from "@expo/vector-icons"
+import { Habit } from "../models/habit/habit"
+import { color } from "../theme"
+import { useStores } from "../models"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -26,30 +31,17 @@ import { translate } from "../i18n"
  *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
  */
 export type NavigatorParamList = {
-  welcome: undefined
+  calendar: undefined
   demo: undefined
   newHabit: undefined
+  showHabit: {habit: Habit}
+  today: undefined
   demoList: undefined
   home: undefined
 }
 
 // Documentation: https://reactnavigation.org/docs/stack-navigator/
 const Stack = createNativeStackNavigator<NavigatorParamList>()
-
-const AppStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName="welcome"
-    >
-      <Stack.Screen name="welcome" component={WelcomeScreen} />
-      <Stack.Screen name="demo" component={DemoScreen} />
-      <Stack.Screen name="demoList" component={DemoListScreen} />
-    </Stack.Navigator>
-  )
-}
 
 const HomeStack = () => {
   return (
@@ -61,6 +53,7 @@ const HomeStack = () => {
     >
       <Stack.Screen name="home" component={HomeScreen} />
       <Stack.Screen name="newHabit" component={NewHabitScreen} />
+      <Stack.Screen name="showHabit" component={ShowHabitScreen} />
     </Stack.Navigator>
   )
 }
@@ -68,7 +61,10 @@ const HomeStack = () => {
 interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 const Tab = createBottomTabNavigator();
-
+const CalendarScreenIcon = (isActive: boolean) => (<></>)
+const HomeScreenIcon = (isActive: boolean) => <Feather name="check-circle" size={24} color={color.palette.lighterGrey} />
+const TodayScreenIcon = <Feather name="clipboard" size={24} color={color.palette.lighterGrey} />
+ 
 export const AppNavigator = (props: NavigationProps) => {
   const colorScheme = useColorScheme()
   return (
@@ -80,10 +76,51 @@ export const AppNavigator = (props: NavigationProps) => {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
+          tabBarActiveTintColor: color.primary,
+          tabBarInactiveTintColor: color.palette.offWhite,
+          tabBarInactiveBackgroundColor: color.gradientStart,
+          tabBarActiveBackgroundColor: color.gradientEnd,
         }}
       >
-        <Tab.Screen name={translate("route.home")} component={HomeStack} />
-        <Tab.Screen name={translate("route.calendar")} component={AppStack} />
+        <Tab.Screen
+          name={translate("route.home")}
+          component={HomeStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Feather
+                name="check-circle"
+                size={24}
+                color={focused ? color.primary : color.palette.lighterGrey}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name={translate("route.today")}
+          component={TodayScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Feather
+                name="clipboard"
+                size={24}
+                color={focused ? color.primary : color.palette.lighterGrey}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name={translate("route.calendar")}
+          component={CalendarScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Feather
+                name="calendar"
+                size={24}
+                color={focused ? color.primary : color.palette.lightGrey}
+              />
+            ),
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   )

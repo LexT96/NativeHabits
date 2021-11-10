@@ -34,7 +34,6 @@ storiesOf("Header", module)
         <View style={VIEWSTYLE}>
           <Header
             headerTx="demoScreen.howTo"
-            rightIcon="bullet"
             onRightPress={() => Alert.alert("right nav")}
           />
         </View>

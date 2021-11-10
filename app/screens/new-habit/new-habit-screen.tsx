@@ -1,8 +1,8 @@
 import { observer } from "mobx-react-lite"
-import { Center, Column, FormControl, Input, ScrollView, View, WarningOutlineIcon } from "native-base"
+import { Button, Center, Column, FlatList, FormControl, Input, ScrollView, View, WarningOutlineIcon } from "native-base"
 import React, { useState } from "react"
 import { SafeAreaView, TextStyle, ViewStyle } from "react-native"
-import { Button, GradientBackground, HabitIcon, Header, Screen } from "../../components"
+import { GradientBackground, HabitIcon, Header, Screen } from "../../components"
 import { HabitIconType, icons } from "../../components/habit-icon/icons"
 import { translate } from "../../i18n"
 import { Habit, HabitModel } from "../../models/habit/habit"
@@ -53,25 +53,59 @@ const ICONS: ViewStyle = {
   marginVertical: spacing[7],
 }
 
+interface FormError {
+  name?: boolean;
+  icon?: boolean;
+}
+
 export const NewHabitScreen = observer(function NewHabitScreen() {
-  const {habitStore} = useStores();
+  const { habitStore } = useStores()
   const navigation = useNavigation()
   const goBack = () => navigation.goBack()
-  const [name, setName] = useState("");
-  const [icon, setIcon] = useState("");
-  const handleNameChange = (text: string) => setName(text);
+  const [name, setName] = useState("")
+  const [icon, setIcon] = useState("")
+  const [error, setError] = useState<FormError>({})
+  const handleNameChange = (text: string) => setName(text)
   const createHabit = async () => {
+    const nameError = name.length === 0
+    const iconError = !icon
+    setError({ ...error, name: nameError, icon: iconError })
+    if (nameError || iconError) return
     const habit = HabitModel.create({ id: Date.now(), name, icon })
-    habitStore.addHabit(habit);
-    navigation.goBack();
+    habitStore.addHabit(habit)
+    navigation.goBack()
   }
 
-  const validateForm = () => {
-    return name.length > 0;
+  const generateHabitIcons = () => {
+    const habitIcons = [];
+    for (let i = 0; i < icons.length; i+=2) {
+      const firstIcon = icons[i];
+      const secondIcon= icons[i+1];
+      habitIcons.push(
+        <Column key={i}>
+          <HabitIcon
+            isActive={icon === firstIcon.name}
+            onPress={() => setIcon(firstIcon.name)}
+            source={icons[i].img}
+          />
+          {secondIcon && (
+            <HabitIcon
+              isActive={icon === secondIcon.name}
+              onPress={() => setIcon(secondIcon.name)}
+              source={icons[i + 1].img}
+            />
+          )}
+        </Column>,
+      )
+    }
+    return <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      {habitIcons}
+    </ScrollView>
   }
+
   return (
     <View testID="NewHabitScreen" style={FULL}>
-      <GradientBackground colors={["#422443", "#281b34"]} />
+      <GradientBackground />
       <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
         <Header
           headerTx="newHabitScreen.title"
@@ -81,21 +115,14 @@ export const NewHabitScreen = observer(function NewHabitScreen() {
           onLeftPress={goBack}
         />
         <Center style={ICONS}>
-          <ScrollView horizontal>
-            {icons.map((habitIcon: HabitIconType, index: number) => (
-              <Column key={index}>
-                <HabitIcon
-                  isActive={icon === habitIcon.name}
-                  onPress={() => setIcon(habitIcon.name)}
-                  source={icons[index].img}
-                  key={index}
-                />
-                {/* <HabitIcon onPress={() => setIcon(icon.img)} key={index} iconNumber={index} /> */}
-              </Column>
-            ))}
-          </ScrollView>
+          {generateHabitIcons()}
+          <FormControl isInvalid={error.icon}>
+            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+              {translate("newHabitScreen.error.icon")}
+            </FormControl.ErrorMessage>
+          </FormControl>
         </Center>
-        <FormControl isInvalid={false}>
+        <FormControl isInvalid={error.name}>
           <Input
             size="2xl"
             value={name}
@@ -104,7 +131,7 @@ export const NewHabitScreen = observer(function NewHabitScreen() {
             placeholder={translate("newHabitScreen.placeholders.name")}
           />
           <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            Try different from previous passwords.
+            {translate("newHabitScreen.error.name")}
           </FormControl.ErrorMessage>
         </FormControl>
       </Screen>
@@ -113,10 +140,10 @@ export const NewHabitScreen = observer(function NewHabitScreen() {
           <Button
             testID="NewHabitButton"
             style={CONTINUE}
-            textStyle={CONTINUE_TEXT}
-            tx="newHabitScreen.create"
             onPress={createHabit}
-          />
+          >
+            {translate("newHabitScreen.create")}
+          </Button>
         </View>
       </SafeAreaView>
     </View>

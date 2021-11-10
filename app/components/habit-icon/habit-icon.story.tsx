@@ -9,7 +9,6 @@ storiesOf("HabitIcon", module)
   .add("Style Presets", () => (
     <Story>
       <UseCase text="Primary" usage="The primary.">
-        <HabitIcon style={{ backgroundColor: color.error }} onPress={() => console.log("pressed")}iconNumber={1} />
       </UseCase>
     </Story>
   ))

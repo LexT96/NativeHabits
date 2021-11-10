@@ -1,7 +1,8 @@
 import React, { ErrorInfo } from "react"
 import { TextStyle, View, ViewStyle, ScrollView, ImageStyle } from "react-native"
 import { color } from "../../theme"
-import { Button, Icon, Text } from "../../components"
+import { Icon} from "../../components"
+import { Button, Text} from "native-base"
 
 const CONTAINER: ViewStyle = {
   alignItems: "center",
@@ -51,11 +52,6 @@ const CONTENT_ERROR: TextStyle = {
 //   color: color.dim,
 // }
 
-const ICON: ImageStyle = {
-  marginTop: 30,
-  width: 64,
-  height: 64,
-}
 
 export interface ErrorComponentProps {
   error: Error
@@ -69,16 +65,13 @@ export interface ErrorComponentProps {
 export const ErrorComponent = (props: ErrorComponentProps) => {
   return (
     <View style={CONTAINER}>
-      <Icon style={ICON} icon="bug" />
-      <Text style={TITLE_ERROR} tx={"errorScreen.title"} />
-      <Text style={FRIENDLY_SUBTITLE} tx={"errorScreen.friendlySubtitle"} />
       <View style={ERROR_DETAILS_CONTAINER}>
         <ScrollView>
-          <Text selectable style={CONTENT_ERROR} text={`${props.error}`} />
+          <Text>{`${props.error}`}</Text>
           {/* <Text selectable style={CONTENT_BACKTRACE} text={`${props.errorInfo.componentStack}`} /> */}
         </ScrollView>
       </View>
-      <Button style={BTN_RESET} onPress={props.onReset} tx="errorScreen.reset" />
+      <Button style={BTN_RESET} onPress={props.onReset} />
     </View>
   )
 }

@@ -5,7 +5,9 @@ export const icons = [
     { name: "toothbrush", img: require("./toothbrush.png"), color: color.palette.orange },
     { name: "shower", img: require("./shower.png"), color: color.palette.orange },
     { name: "meditation", img: require("./meditation.png"), color: color.palette.orange },
+    { name: "notepad", img: require("./notepad.png"), color: color.palette.orange },
     { name: "pill",img: require("./pill.png"), color: color.palette.orange },
+    { name: "water",img: require("./water.png"), color: color.palette.orange },
     { name: "moon", img: require("./moon.png"), color: color.palette.orange },
   ]
 
