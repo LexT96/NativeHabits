@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { StackScreenProps } from "@react-navigation/stack"
 import { observer } from "mobx-react-lite"
 import { AddIcon, Column, Divider, Fab, FlatList } from "native-base"
@@ -18,11 +19,11 @@ export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = obse
   ({ navigation }) => {
     const {habitStore, habitEntryStore} = useStores();
     const {habits} = habitStore;
+    const {habitEntries} = habitEntryStore;
     const navigateToNewHabitScreen = () => navigation.navigate("newHabit")
-
     useEffect(() => {
-      habitStore.setHabits();
-      habitEntryStore.setHabitEntries();
+      if (habits.length === 0) habitStore.setHabits();
+      if (habitEntries.length === 0) habitEntryStore.setHabitEntries();
     }, [])
 
     return (
